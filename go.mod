@@ -1,6 +1,6 @@
 module github.com/kshdb/ks_mqtt
 
-go 1.21
+go 1.20
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.4.3
