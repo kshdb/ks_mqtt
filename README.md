@@ -1,4 +1,6 @@
-# [GF](https://goframe.org/pages/viewpage.action?pageId=1114119)-X-MQTT
+# ks_mqtt
+
+基于goframe和EMQX对接的mqtt操作库
 
 ### 配置
 
