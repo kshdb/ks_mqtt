@@ -2,36 +2,39 @@
 
 ### 配置
 
-```toml 
-[mqtt]
-    [mqtt.clientAdmin] # 此位置就是 clietName
-        debug = false # 是否开启debug 
-        url = "tcp://127.0.0.1:1884" # 连接目标
-        clientId = "aaa" # 客户端id
-        subscribe = "a/#" # 订阅频道 无需订阅 写 false
-        qos = 0 # 协议质量 0 1 2
-        username = "***" # 用户名密码
-        password = "***" # 密码
-        cleanSession = false # 清空 session
+```config.yaml
+mqtt:
+  clientAdmin: # 此位置就是 clietName
+        debug : false # 是否开启debug
+        url : "mqtt://123.207.210.226:1883" # 连接目标
+        clientId : "mqttx_8779ecf7" # 客户端id
+        subscribe : "testAtopic/#" # 订阅频道 无需订阅 写 false
+        qos : 1 # 协议质量 0 1 2
+        username : "aaa" # 用户名密码
+        password : "123456" # 密码
+        cleanSession : false # 清空 session
 ```
 ### 代码演示
 ```go
 package main
 
 import (
-    "fmt"
-    "github.com/kshdb/ks_mqtt/mqtt"
+	"fmt"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/kshdb/ks_mqtt/cmqtt"
 )
 
 func main() {
-    xmqtt.CreateClient(func(option *xmqtt.ClientCallBackOption, config *xmqtt.Config) {
-        option.MessageCallbackFunc = func(data *xmqtt.MessageHandlerData) {
-            fmt.Println(data.GetMessageId(), data.GetTopic(), data.GetMsg())
-            //client.SendMsg("收到", "sdt/c/1")
-        }
-    })
-    select {}
+	cmqtt.CreateClient(func(option *cmqtt.ClientCallBackOption, config *cmqtt.Config) {
+		option.MessageCallbackFunc = func(data *cmqtt.MessageHandlerData) {
+			fmt.Println("接收到消息", data.GetMessageId(), data.GetTopic(), data.GetMsg())
+			
+		}
+	})
+	select {}
 }
+
 ```
 
 ### 快速接入示例
@@ -82,21 +85,23 @@ import (
     "github.com/kshdb/ks_mqtt/mqtt"
 )
 
-func NullEvent(data *xmqtt.EventHandlerData) {
+func NullEvent(data *cmqtt.EventHandlerData) {
     fmt.Println(data.MsgHandlerData.GetTopic(), data.MsgHandlerData.GetMsg())
-    data.SendMsg(g.Map{
-        "msg": data.GetJson().Get("msg").String() + "!!!!!!!!!!!!!!!",
-    }, "a/1")
+	data.CMQTT.SendMsg(g.Map{
+		"code": 0,
+		"msg":  "收到了消息：",
+		"data": gconv.Map(data.GetMsg()),
+	}, "testtopic")
 }
 ```
 
-**PS: ``*xmqtt.EventHandlerData`` 中已实现 ``SendMsg``  操作 默认使用接收客户端用户进行发送操作 **
+**PS: ``*cmqtt.EventHandlerData`` 中已实现 ``SendMsg``  操作 默认使用接收客户端用户进行发送操作 **
 
-> *xmqtt.EventHandlerData 操作对象内的函数
+> *cmqtt.EventHandlerData 操作对象内的函数
 
 SendMsg(msg any, topic string, qos ...byte) error 
 
-**``*xmqtt.Client`` 中的 ``SendMsg`` 函数是此函数的原型 **
+**``*cmqtt.Client`` 中的 ``SendMsg`` 函数是此函数的原型 **
 
 - ``GetJson`` 函数 获取订阅频道接收到的数据的json对象 **需要确保接收数据为 JSON**
 
@@ -107,10 +112,10 @@ GetJson() (json *gjson.Json)
 > 获取 ``MQTT`` 操作对象
 
 ```go
-xmqtt.MqttList.Get("{配置里设置的MQTT名称}") // 获取到 *xmqtt.Client 操作对象
+cmqtt.MqttList.Get("{配置里设置的MQTT名称}") // 获取到 *cmqtt.Client 操作对象
 ```
 
-> *xmqtt.Client 操作对象内函数
+> *cmqtt.Client 操作对象内函数
 
 - ``SendMsg`` 函数
 
@@ -124,7 +129,7 @@ SendMsg(msg any, topic string, qos ...byte) error
 > 快速返回 json
 
 ```go
-xmqtt.MqttList.Get(global.DefaultMqttClientName).Json().SetData(g.Map{
+cmqtt.MqttList.Get(global.DefaultMqttClientName).Json().SetData(g.Map{
 	"msg":  msg,
 	"mode": mode,
 	"from": from,
