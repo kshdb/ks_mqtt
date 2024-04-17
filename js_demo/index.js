@@ -1,10 +1,16 @@
 const mqtt = require('mqtt');
  
 // MQTT代理的连接信息
-const brokerAddress = 'mqtt://192.168.1..226:1883';  // 更换为实际的MQTT代理地址
+const brokerAddress = 'mqtt://192.168.1.226:1883';  // 更换为实际的MQTT代理地址
 const options = {
+  // clean: true, // true: 清除会话, false: 保留会话
+  // connectTimeout: 4000, // 超时时间
+  // 认证信息
+  clientId: 'mqttx_8779ecf8',	//客户端ID //如果不填会自动生成
   username: 'aaa',  // 更换为实际的用户名
-  password: '123456'   // 更换为实际的密码
+  password: '123456',   // 更换为实际的密码
+  // 心跳时间
+  //keepalive: 60
 };
  
 // 创建MQTT客户端

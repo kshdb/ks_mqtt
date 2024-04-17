@@ -8,7 +8,7 @@
 mqtt:
   clientAdmin: # 此位置就是 clietName
         debug : false # 是否开启debug
-        url : "mqtt://192.168.1..226:1883" # 连接目标
+        url : "mqtt://192.168.1.226:1883" # 连接目标
         clientId : "mqttx_8779ecf7" # 客户端id
         subscribe : "testAtopic/#" # 订阅频道 无需订阅 写 false
         qos : 1 # 协议质量 0 1 2
